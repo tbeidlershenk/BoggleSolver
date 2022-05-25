@@ -2,7 +2,8 @@ public class Test {
     
     public static void main (String [] args) {
         
-        Boggle bog = new Boggle(4, 3);
+        Boggle bog = new Boggle(6, 3);
+        /*
         bog.rescramble();
         bog.printBoggle();
         bog.printWords();
@@ -16,6 +17,10 @@ public class Test {
         bog.getWords().printList();
         bog.printBoggle();
         System.out.println(bog.getWords().getLength());
+        */
+        
+        //BoggleGUI gui = new BoggleGUI(bog);
+        MainMenu menu = new MainMenu();
 
     }
 }

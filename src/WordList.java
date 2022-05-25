@@ -16,32 +16,23 @@ public class WordList extends LinkedList<String> {
             
             char[] copy = sorted.clone();
             boolean remove = false;
-            /*
-            for (int j = 0; j < sorted.length; j++)
-                System.out.print(sorted[j] + " ");
-            System.out.println();
-            System.out.println("Checking " + curr.data.toString());
-            */
+
             for (char a: curr.data.toCharArray()) {
-                //System.out.println(a);
                 for (int k = 0; k < copy.length; k++) {
                     if (a == copy[k]) {
                         copy[k] = '0';
                         break;
                     } else if ((copy[k] != '0' && copy[k] > a) || k == copy.length-1) {
                         remove = true;
-                        //System.out.println(copy[k] + " without finding " + a);
                         break;
                     }
                 }
                 if (remove) {
-                    //System.out.println("Removing " + curr.data.toString());
                     remove(pos);
                     break;
                 }
             }
             if (!remove) {
-                //System.out.println("Keeping " + curr.data.toString());
                 pos++;
             }
             curr = curr.next;
@@ -175,10 +166,15 @@ public class WordList extends LinkedList<String> {
     
     
     public void printList() {
-        Node curr = firstNode;
-        for (int i = 0; i < numberOfEntries; i++) {
-            System.out.println(curr.data.toString());
+        Node curr = firstNode.next;
+        System.out.print(curr.prev.data.toString());
+        for (int i = 0; i < numberOfEntries -1; i++) {
+            System.out.print(curr.data.toString() + " ");
+            if (curr.next.data.toString().charAt(0) != curr.data.toString().charAt(0)) {
+                System.out.println();
+            }
             curr = curr.next;
+
         }
     }
 

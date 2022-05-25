@@ -4,11 +4,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Random;
 import java.util.HashMap;
-//test
+
 public class Reader {
 
-    private static String wordfile = "files/words.txt";
-    private static String freqfile = "files/frequencies.txt";
+    private static String words = "files/words.txt";
+    private static String frequencies = "files/frequencies.txt";
+    private static String options = "files/options.txt";
+
     private static FileReader fr;
     private static BufferedReader br;
 
@@ -16,7 +18,7 @@ public class Reader {
     public static WordList readWords (int minLength) {
         WordList list = new WordList();
         try {
-            fr = new FileReader(wordfile);
+            fr = new FileReader(words);
             br = new BufferedReader(fr);
             String line = br.readLine();
             while (line != null) {
@@ -41,7 +43,7 @@ public class Reader {
         try {
 
             int count = 0;
-            fr = new FileReader(freqfile);
+            fr = new FileReader(frequencies);
             br = new BufferedReader(fr);
             String line = br.readLine();
             
@@ -53,7 +55,7 @@ public class Reader {
                 
                 // If end of dice, restart
                 if (count > 14) {
-                    fr = new FileReader(freqfile);
+                    fr = new FileReader(frequencies);
                     br = new BufferedReader(fr);
                 }
                 
@@ -66,8 +68,31 @@ public class Reader {
         return result;
     }
 
-    public static HashMap<String, String> readOptions () {
-        HashMap settings = new HashMap<String, String>();
-        return null;
+    public static HashMap<String, Integer> readOptions () {
+        
+        HashMap settings = new HashMap<String, Integer>();
+
+        try {
+            
+            fr = new FileReader(options);
+            br = new BufferedReader(fr);
+            String line = br.readLine();
+
+            while (line != null) {
+                
+                String[] args = line.split("=");
+                String key = args[0];
+                Integer value = Integer.parseInt(args[1]);
+                System.out.println(key + "=" + value);
+                settings.put(key, value);
+                line = br.readLine();
+            }
+        
+        } catch (IOException e) {
+            System.out.println("Error opening file");
+        } catch (NumberFormatException e) {
+            System.out.println("Error parsing String -> Integer");
+        }
+        return settings;
     }
 }
