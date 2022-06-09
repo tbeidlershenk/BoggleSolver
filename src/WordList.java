@@ -67,10 +67,10 @@ public class WordList extends LinkedList<String> {
                     // If word is found, leave in list
                     if (recursiveFind(r, c, curr.data.toString(), 0, grid)){
                         pos++;
-                        System.out.println(curr.data.toString() + " FOUND");
+                        //System.out.println(curr.data.toString() + " FOUND");
                         found = true;
                         
-                        System.out.println("Word Found: " + curr.data.toString());
+                        //System.out.println("Word Found: " + curr.data.toString());
                     }
                     //System.out.println("Row: " + r);
                     //System.out.println("Column: " + c);
@@ -81,13 +81,13 @@ public class WordList extends LinkedList<String> {
             count++;
             
             if (!found) {
-                System.out.println(numberOfEntries);
-                System.out.println(pos);
+                //System.out.println(numberOfEntries);
+                //System.out.println(pos);
 
                 remove(pos+1);
-                System.out.println(numberOfEntries);
-                System.out.println("Word Not Found: " + curr.data.toString());
-                System.out.println("Word at pos: " + getNodeAt(pos).data.toString());   
+                //System.out.println(numberOfEntries);
+                //System.out.println("Word Not Found: " + curr.data.toString());
+                //System.out.println("Word at pos: " + getNodeAt(pos).data.toString());   
             }
         }
     }
@@ -117,7 +117,7 @@ public class WordList extends LinkedList<String> {
                 }
                 System.out.println();
             }*/
-			System.out.println("Curr: " + currWord);
+			//System.out.println("Curr: " + currWord);
 			boolean answer;
 			if (loc == word.length()-1)		// base case - word found and we
 				answer = true;				// are done!
@@ -153,7 +153,7 @@ public class WordList extends LinkedList<String> {
 				{
 					grid[r][c] = Character.toLowerCase(grid[r][c]);
 					currWord.deleteCharAt(currWord.length()-1);
-					System.out.println("Curr: " + currWord);
+					//System.out.println("Curr: " + currWord);
 				}
 			}
             grid[r][c] = Character.toLowerCase(grid[r][c]);  // Change it to
@@ -166,16 +166,31 @@ public class WordList extends LinkedList<String> {
     
     
     public void printList() {
-        Node curr = firstNode.next;
-        System.out.print(curr.prev.data.toString());
-        for (int i = 0; i < numberOfEntries -1; i++) {
-            System.out.print(curr.data.toString() + " ");
-            if (curr.next.data.toString().charAt(0) != curr.data.toString().charAt(0)) {
-                System.out.println();
-            }
+        Node curr = firstNode;
+        for (int i = 0; i < numberOfEntries; i++) {
+            System.out.println(curr.data.toString());
             curr = curr.next;
-
         }
+    }
+
+    public String[] toArray() {
+        Node curr = firstNode;
+        String[] arr = new String[numberOfEntries];
+        for (int i = 0; i < numberOfEntries; i++) {
+            arr[i] = curr.data.toString();
+            curr = curr.next;
+        }
+        return arr;
+    }
+
+    public String toString() {
+        Node curr = firstNode;
+        String str = "";
+        for (int i = 0; i < numberOfEntries; i++) {
+            str += curr.data.toString() + " ";
+            curr = curr.next;
+        }
+        return str;
     }
 
 }

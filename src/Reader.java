@@ -7,23 +7,41 @@ import java.util.HashMap;
 
 public class Reader {
 
-    private static String words = "files/words.txt";
+    private static String words = "files/oxford_dict.txt";
     private static String frequencies = "files/frequencies.txt";
     private static String options = "files/options.txt";
-
+    private static String allowed = "n. —n. v. —v. adj. —adj. adv. —adv. prep. —prep. var. —var. colloq. —colloq.";
     private static FileReader fr;
     private static BufferedReader br;
 
-    // Read words.txt to return a WordList of words of minLength or greater
-    public static WordList readWords (int minLength) {
-        WordList list = new WordList();
+    public static HashMap<String, String> readWords(int minLength) {
+        HashMap<String, String> dict = new HashMap<>();
         try {
             fr = new FileReader(words);
             br = new BufferedReader(fr);
             String line = br.readLine();
             while (line != null) {
-                if (line.length() >= minLength) 
-                    list.add(line.toLowerCase());
+                String[] def = line.split("  ", 2);
+                String word = def[0].toLowerCase();
+                boolean include = true;
+                for (int i = 0; i < word.length(); i++) {
+                    if (word.charAt(i) > 48 && word.charAt(i) < 58) {
+                        System.out.println(word);
+                        word = word.substring(0, i).toLowerCase();
+                        System.out.println(word);
+                        break;
+                    }
+                    if (word.charAt(i) > 122 || word.charAt(i) < 97) {
+                        include = false;
+                        break;
+                    }
+                }
+                if (def.length > 1) {
+                    //System.out.println(def[1].split(" ")[0].toLowerCase());
+                    if (allowed.contains(def[1].split(" ")[0].toLowerCase()) && def[0].length() >= minLength && include) {
+                        dict.put(word, def[1]);
+                    }
+                }
                 line = br.readLine();
             }
             br.close();
@@ -31,9 +49,10 @@ public class Reader {
         } catch (IOException e) {
             System.out.println("Error");
         }
-        return list;
+        return dict;
+        
+
     }
-    
     // Read frequencies.txt to return an array of chars as the board of size * size
     public static char[] readFrequencies (int size) {
         
