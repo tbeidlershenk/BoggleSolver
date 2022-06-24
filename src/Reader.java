@@ -4,13 +4,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Random;
 import java.util.HashMap;
+import java.lang.StringBuilder;
 
 public class Reader {
 
     private static String words = "files/oxford_dict.txt";
     private static String frequencies = "files/frequencies.txt";
     private static String options = "files/options.txt";
-    private static String allowed = "n. —n. v. —v. adj. —adj. adv. —adv. prep. —prep. var. —var. colloq. —colloq.";
+    private static String allowed = "n. —n. v. —v. adj. —adj. adv. —adv. prep. —prep. var. —var.";
     private static FileReader fr;
     private static BufferedReader br;
 
@@ -21,25 +22,34 @@ public class Reader {
             br = new BufferedReader(fr);
             String line = br.readLine();
             while (line != null) {
-                String[] def = line.split("  ", 2);
-                String word = def[0].toLowerCase();
+
+                //System.out.println(line);
+                String[] splitLine = line.split("  ");
+                //System.out.println(splitLine.length);
+                String word = splitLine[0].toLowerCase();;
                 boolean include = true;
+
+                // iterate through the word (make sure it is a single word)
                 for (int i = 0; i < word.length(); i++) {
-                    if (word.charAt(i) > 48 && word.charAt(i) < 58) {
-                        System.out.println(word);
-                        word = word.substring(0, i).toLowerCase();
-                        System.out.println(word);
+                    
+                    // current character is between '0' and '9'
+                    if (Reader.isDigit(word.charAt(i))) {
+                        splitLine[0] = word.substring(0,i);
                         break;
                     }
-                    if (word.charAt(i) > 122 || word.charAt(i) < 97) {
+                    // current character is not between 'a' and 'z'
+                    if (!Reader.isLetter(word.charAt(i))) {
                         include = false;
                         break;
                     }
                 }
-                if (def.length > 1) {
-                    //System.out.println(def[1].split(" ")[0].toLowerCase());
-                    if (allowed.contains(def[1].split(" ")[0].toLowerCase()) && def[0].length() >= minLength && include) {
-                        dict.put(word, def[1]);
+                if (splitLine.length > 1) {
+                    
+                    boolean legalType = allowed.contains(splitLine[1].split(" ")[0].toLowerCase());
+                    boolean legalSize = splitLine[0].length() >= minLength;
+
+                    if (legalType && legalSize && include) {
+                        dict.put(word, splitLine[1]);
                     }
                 }
                 line = br.readLine();
@@ -47,7 +57,7 @@ public class Reader {
             br.close();
             fr.close();
         } catch (IOException e) {
-            System.out.println("Error");
+            System.out.println("Error parsing file");
         }
         return dict;
         
@@ -113,5 +123,33 @@ public class Reader {
             System.out.println("Error parsing String -> Integer");
         }
         return settings;
+    }
+
+    public static String getType (String abreviation) {
+        if (abreviation.equals("n.") || abreviation.equals("—n.")) {
+            return "noun";
+        } else if (abreviation.equals("v.") || abreviation.equals("—v.")) {
+            return "verb";
+        } else if (abreviation.equals("adj.") || abreviation.equals("—adj.")) {
+            return "adjective";
+        } else if (abreviation.equals("adv.") || abreviation.equals("—adv.")) {
+            return "adverb";
+        } else if (abreviation.equals("prep.") || abreviation.equals("—prep.")) {
+            return "preposition";
+        } else return "";
+    }
+
+    public static boolean isDigit (char c) {
+        if (c > 48 && c < 58) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isLetter (char c) {
+        if (c >= 97 && c <= 122) {
+            return true;
+        }
+        return false;
     }
 }

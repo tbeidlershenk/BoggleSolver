@@ -54,16 +54,56 @@ public class Boggle {
         }
     }
 
-    public String getDefinition(String key) {
-        System.out.println(dict.get(key).length());
-        String definition = dict.get(key).split("2")[0]
-            .substring(0, Math.min(60, dict.get(key).split("2")[0].length()));
-        return definition;
+    public String[] getDefinition(String key) {
+        System.out.println(dict.get(key).length() + "here");
+        //String definition = dict.get(key).split("2")[0]
+            //.substring(0, Math.min(60, dict.get(key).split("2")[0].length()));
+        String definition = dict.get(key);
+        String[] splitDefinition = new String[2];
+        int i = 0;
+        for (i = 0; i < definition.length(); i++) {
+            if (definition.charAt(i) == '.') {
+                System.out.println(definition.substring(0,i+1));
+                System.out.println(definition);
+                splitDefinition[0] = Reader.getType(definition.substring(0,i+1));
+                break;
+            }
+        }
+        for (int j = i+1; j < definition.length(); j++) {
+            if (j-i > 5) {
+                if ((Reader.isDigit(definition.charAt(j)) && definition.charAt(j) != '1') || j == definition.length()-1) {
+                    splitDefinition[1] = definition.substring(i+1,j);
+                    break;
+                }
+            }
+        }
+        return splitDefinition;
+    }
+
+    public int countPoints () {
+        int points = 0;
+        for (String word: words.toArray()) {
+            points += addPoints(word);
+        }
+        return points;
+    }
+
+    public int addPoints (String word) {
+        if (word.length() >= 8 ) {
+            return 11;
+        } else if (word.length() == 7) {
+            return 4;
+        } else if (word.length() == 6) {
+            return 3;
+        } else if (word.length() == 5) {
+            return 2;
+        } else return 1;
     }
 
     public boolean checkWord(String key) {
-        if (strWords.contains(key)) {
-            return true;
+        for (String word: strWords.split(" ")) {
+            if (key.equals(word))
+                return true;
         }
         return false;
     }
