@@ -43,8 +43,6 @@ public class MainMenu extends JFrame implements ActionListener {
               System.out.println("Moved to " + e.getComponent().getLocation());
             }
           });
-        
-    
     }
 
     private void addComponents () {

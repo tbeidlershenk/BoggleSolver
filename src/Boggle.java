@@ -4,7 +4,6 @@ import java.util.HashMap;
 
 public class Boggle {
     
-    private int minLength = 3;
     private int size;
     private int squares;
     private char[][] grid;
@@ -21,13 +20,17 @@ public class Boggle {
         letters = new char[squares];
         grid = new char[size][size];
         dict = Reader.readWords(wordSize);
+        initializeWordlist();
+        System.out.println(words.getLength());
+    }
+
+    private void initializeWordlist () {
         words = new WordList();
         for (String key: dict.keySet()) {
             words.add(key);
         }
-        System.out.println(words.getLength());
     }
-
+    
     // First scanning of WordList
     // Stub method for WordList method removeImpossibleWords()
     public void removeImpossibleWords () {
