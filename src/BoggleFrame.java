@@ -1,5 +1,11 @@
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
+import java.awt.Color;
+import javax.swing.plaf.metal.MetalToggleButtonUI;
+import java.awt.Point;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -31,6 +37,8 @@ public class BoggleFrame extends  JFrame {
     private JToggleButton[][] grid;
     private Boggle bog;
     private String currentWord = "";
+    private String currentHash = "";
+    private String allWords = "";
     private int minSize;
     private int gridSize;
 
@@ -377,11 +385,25 @@ public class BoggleFrame extends  JFrame {
         grid = new  JToggleButton[gridSize][gridSize];
         for (int i = 0; i < gridSize; i++) {
             for (int j = 0; j < gridSize; j++) {
-                grid[i][j] = new  JToggleButton();
+                JToggleButton b = new  JToggleButton();
+                b.setBackground(Color.GREEN);
+                b.setUI(new MetalToggleButtonUI() { protected Color getSelectColor() { return Color.RED;}});
+                //b.addMouseListener(new MouseListener() { public void mouseDragged(MouseEvent e) {mouseOverGrid(e);}});
+                grid[i][j] = b;
+
             }
         }
     }
     
+    private void mouseOverGrid(MouseEvent e) {
+        if (e.isShiftDown()) {
+            JToggleButton copy = (JToggleButton) e.getSource();
+            if (!copy.isSelected()) {
+                copy.doClick();
+            }
+        }
+    }
+
     // Handle Shuffle button
     private void shuffleButton(java.awt.event.ActionEvent evt) { 
         bog = new Boggle(gridSize, minSize); 
@@ -404,19 +426,88 @@ public class BoggleFrame extends  JFrame {
         System.out.println(letter);
         //if (currentWord.length() >= 3)
         JToggleButton copy = (JToggleButton) evt.getSource();
+        String hash = "" + copy.hashCode();
+
         if (copy.isSelected()) {
-            currentWord += letter;
+            currentWord += letter.toLowerCase();
+            currentHash += hash;
         } else {
-            currentWord = currentWord.substring(0, currentWord.length()-1);
+            deselectButtons();
+            System.out.println("here");
+            currentWord = "";
+            currentHash = "";
         }
         System.out.println(currentWord);
-        if (currentWord.length() >= minSize && bog.checkWord(currentWord)) {
+        System.out.println(currentHash);
+        
+        boolean validWord = !allWords.contains(currentWord) && bog.checkWord(currentWord);
+        boolean validLength = currentWord.length() >= minSize;
+        
+        if (validLength && validWord) {
+            allWords += currentWord + " ";
             playerListModel.addElement(currentWord);
             updateValues(currentWord);
-
+            deselectButtons();
         }
+        updateLegalLetters(hash);
     }  
     
+    // Unselect buttons after word found
+    private void deselectButtons () {
+        for (int i = 0; i < grid[0].length; i++) {
+            for (int j = 0; j < grid.length; j++) {
+                if (grid[i][j].isSelected()) {
+                    grid[i][j].setEnabled(true);
+                    grid[i][j].doClick();
+                }
+            }
+        }
+    }
+  
+    //
+    private void updateLegalLetters (String hash) {
+        // set all to false
+        for (int i = 0; i < grid[0].length; i++) {
+            for (int j = 0; j < grid.length; j++) {
+                grid[i][j].setEnabled(false);
+            }
+        }
+        boolean noneSelected = true;
+        for (int i = 0; i < grid[0].length; i++) {
+            for (int j = 0; j < grid.length; j++) {
+                if (grid[i][j].isSelected()) {
+                    noneSelected = false;
+                    if (hash.equals(""+grid[i][j].hashCode())) {
+                        enableSurroundingLetters(i-1, j-1);
+                    }
+                }
+            }
+        }
+        if (noneSelected) {
+            for (int i = 0; i < grid[0].length; i++) {
+                for (int j = 0; j < grid.length; j++) {
+                    grid[i][j].setEnabled(true);
+                }
+            }
+        }
+    }
+
+    private void enableSurroundingLetters (int x, int y) {
+        // set legal to true
+        for (int i = x; i < x + gridSize-1; i++) {
+            for (int j = y; j < y + gridSize-1; j++) {
+                
+                boolean xValid = (i >= 0 && i <= gridSize-1);
+                boolean yValid = (j >= 0 && j <= gridSize-1);
+                
+                if (xValid && yValid) {
+                    grid[i][j].setEnabled(true);
+                }
+            }
+        } 
+
+    }
+
     // Handle word selection from either word list
     private void wordSelected(javax.swing.event.ListSelectionEvent e) {
         System.out.println("new event\n"+e.getSource().hashCode());
@@ -452,8 +543,10 @@ public class BoggleFrame extends  JFrame {
         char[][] letterGrid = bog.getGrid();
         for (int i = 0; i < gridSize; i++) {
             for (int j = 0; j < gridSize; j++) {
-                grid[i][j].setText(""+letterGrid[i][j]);
-                grid[i][j].setFont(new java.awt.Font("Krungthep", 0, 18)); // NOI18N
+                String s = "" + letterGrid[i][j];
+                grid[i][j].setText(s.toUpperCase());
+                grid[i][j].setFont(new java.awt.Font("Krungthep", 0, 30)); // NOI18N
+                grid[i][j].setBackground(Color.GREEN);
             }
         }
     }

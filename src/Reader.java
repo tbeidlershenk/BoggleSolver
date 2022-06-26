@@ -11,7 +11,7 @@ public class Reader {
     private static String words = "files/oxford_dict.txt";
     private static String frequencies = "files/frequencies.txt";
     private static String options = "files/options.txt";
-    private static String allowed = "n. —n. v. —v. adj. —adj. adv. —adv. prep. —prep. var. —var.";
+    private static String allowed = "n. —n. v. —v. adj. —adj. adv. —adv. prep. —prep. var. —var. pl. -pl.";
     private static FileReader fr;
     private static BufferedReader br;
 
@@ -35,6 +35,7 @@ public class Reader {
                     // current character is between '0' and '9'
                     if (Reader.isDigit(word.charAt(i))) {
                         splitLine[0] = word.substring(0,i);
+                        word = word.substring(0,i);
                         break;
                     }
                     // current character is not between 'a' and 'z'
